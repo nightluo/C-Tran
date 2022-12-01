@@ -19,7 +19,7 @@ tar -xvf coco.tar.gz -C data/
 
 Train New Model
 ```
-python main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot data/
+python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
 ```
 
 
