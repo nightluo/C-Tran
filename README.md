@@ -5,7 +5,6 @@ Conference on Computer Vision and Pattern Recognition (CVPR) 2021<br/>
 <br/>
 
 
-
 ## Training and Running C-Tran ##
 
 Python version 3.7 is required and all major packages used and their versions are listed in `requirements.txt`.
