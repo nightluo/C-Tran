@@ -99,6 +99,7 @@ class CUBDataset(Dataset):
 
 
         mask = concept.clone()
+        
         mask.scatter_(0,torch.Tensor(unk_mask_indices).long() , -1)
 
         class_mask = torch.Tensor(self.num_labels).fill_(-1)

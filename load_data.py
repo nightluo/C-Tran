@@ -26,12 +26,14 @@ def get_data(args):
     workers=args.workers
     n_groups=args.n_groups
 
+    # 基于 ImageNet 数据集的 mean 和 std 参数进行标准化
     normTransform = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     scale_size = rescale
     crop_size = random_crop
     if args.test_batch_size == -1:
         args.test_batch_size = batch_size
     
+    # 随即裁剪再放缩到 crop_size 576
     trainTransform = transforms.Compose([transforms.Resize((scale_size, scale_size)),
                                         transforms.RandomChoice([
                                         transforms.RandomCrop(640),
@@ -71,6 +73,7 @@ def get_data(args):
             transform=trainTransform,
             known_labels=args.train_known_labels,
             testing=False)
+
         valid_dataset = Coco80Dataset(split='val',
             num_labels=args.num_labels,
             data_file=os.path.join(coco_root,val_data_name),
@@ -86,7 +89,6 @@ def get_data(args):
         data_dir = os.path.join(data_root,'coco')
         train_img_root = os.path.join(data_dir,'train2014')
         test_img_root = os.path.join(data_dir,'val2014')
-        
         train_dataset = Coco1000Dataset(ann_dir, data_dir, split = 'train', transform = trainTransform,known_labels=args.train_known_labels,testing=False)
         valid_dataset = Coco1000Dataset(ann_dir, data_dir, split = 'val', transform = testTransform,known_labels=args.test_known_labels,testing=True)
     
@@ -172,9 +174,9 @@ def get_data(args):
         valid_list = os.path.join(cub_root,'class_attr_data_10','train_valid.pkl')
         test_list = os.path.join(cub_root,'class_attr_data_10','test.pkl')
 
-        train_dataset = CUBDataset(image_dir, train_list, trainTransform,known_labels=args.train_known_labels,attr_group_dict=attr_group_dict,testing=False,n_groups=n_groups)
-        valid_dataset = CUBDataset(image_dir, valid_list, testTransform,known_labels=args.test_known_labels,attr_group_dict=attr_group_dict,testing=True,n_groups=n_groups)
-        test_dataset = CUBDataset(image_dir, test_list, testTransform,known_labels=args.test_known_labels,attr_group_dict=attr_group_dict,testing=True,n_groups=n_groups)
+        train_dataset = CUBDataset(image_dir, train_list, trainTransform, known_labels=args.train_known_labels,attr_group_dict=attr_group_dict,testing=False,n_groups=n_groups)
+        valid_dataset = CUBDataset(image_dir, valid_list, testTransform, known_labels=args.test_known_labels, attr_group_dict=attr_group_dict,testing=True,n_groups=n_groups)
+        test_dataset = CUBDataset(image_dir, test_list, testTransform, known_labels=args.test_known_labels, attr_group_dict=attr_group_dict,testing=True, n_groups=n_groups)
         
     else:
         print('no dataset avail')

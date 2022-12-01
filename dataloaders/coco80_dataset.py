@@ -8,7 +8,6 @@ from pdb import set_trace as stop
 from dataloaders.data_utils import get_unk_mask_indices,image_loader
 
 class Coco80Dataset(Dataset):
-
     def __init__(self, split,num_labels,data_file,img_root,annotation_dir,max_samples=-1,transform=None,known_labels=0,testing=False,analyze=False):
         self.split=split
         self.split_data = pickle.load(open(data_file,'rb'))
@@ -41,6 +40,7 @@ class Coco80Dataset(Dataset):
         unk_mask_indices = get_unk_mask_indices(image,self.testing,self.num_labels,self.known_labels)
         
         mask = labels.clone()
+        # 根据索引值，在指定位置生成 mask
         mask.scatter_(0,torch.Tensor(unk_mask_indices).long() , -1)
 
         sample = {}

@@ -14,6 +14,7 @@ def run_epoch(args,model,data,optimizer,epoch,desc,train=False,warmup_scheduler=
         model.eval()
 
     # pre-allocate full prediction and target tensors
+    # 初始化，所有的 tensor 长度均初始化为所有标签数量 args.num_labels
     all_predictions = torch.zeros(len(data.dataset),args.num_labels).cpu()
     all_targets = torch.zeros(len(data.dataset),args.num_labels).cpu()
     all_masks = torch.zeros(len(data.dataset),args.num_labels).cpu()
@@ -27,14 +28,18 @@ def run_epoch(args,model,data,optimizer,epoch,desc,train=False,warmup_scheduler=
 
     for batch in tqdm(data,mininterval=0.5,desc=desc,leave=False,ncols=50):
         if batch_idx == max_samples:
+            #  why ?
             break
 
         labels = batch['labels'].float()
         images = batch['image'].float()
         mask = batch['mask'].float()
+        # why ?
+        #  -1 替换为 1, 0、1 替换为 0
         unk_mask = custom_replace(mask,1,0,0)
         all_image_ids += batch['imageIDs']
         
+        # 输入的掩码
         mask_in = mask.clone()
 
         if train:
