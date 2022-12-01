@@ -5,7 +5,7 @@ from pdb import set_trace as stop
 
 
 def get_args(parser,eval=False):
-    parser.add_argument('--dataroot', type=str, default='./data/')
+    parser.add_argument('--dataroot', type=str, default='/mnt/data/luoyan/coco/')
     parser.add_argument('--dataset', type=str, choices=['coco', 'voc','coco1000','nus','vg','news','cub'], default='coco')
     parser.add_argument('--workers', type=int, default=10)
     parser.add_argument('--results_dir', type=str, default='results/')
@@ -13,8 +13,8 @@ def get_args(parser,eval=False):
 
     # Optimization
     parser.add_argument('--optim', type=str, choices=['adam', 'sgd'], default='adam')
-    parser.add_argument('--lr', type=float, default=0.0002)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--lr', type=float, default=0.00001)
+    parser.add_argument('--batch_size', type=int, default=16)
     parser.add_argument('--test_batch_size', type=int, default=-1)
     parser.add_argument('--grad_ac_steps', type=int, default=1)
     parser.add_argument('--scheduler_step', type=int, default=1000)
@@ -36,14 +36,13 @@ def get_args(parser,eval=False):
     parser.add_argument('--heads', type=int, default=4)
     parser.add_argument('--dropout', type=float, default=0.1)
     parser.add_argument('--pos_emb', action='store_true',help='positional encoding') 
-    parser.add_argument('--use_lmt', dest='use_lmt', action='store_true',help='label mask training') 
+    parser.add_argument('--use_lmt', dest='use_lmt', action='store_true', help='label mask training') 
     parser.add_argument('--freeze_backbone', action='store_true')
     parser.add_argument('--no_x_features', action='store_true')
 
     # CUB
     parser.add_argument('--attr_group_dict', type=str, default='')
-    
-    parser.add_argument('--n_groups', type=int, default=10,help='groups for CUB test time intervention')
+    parser.add_argument('--n_groups', type=int, default=10, help='groups for CUB test time intervention')
     
     # Image Sizes
     parser.add_argument('--scale_size', type=int, default=640)

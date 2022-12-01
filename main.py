@@ -13,12 +13,11 @@ from run_epoch import run_epoch
 
 args = get_args(argparse.ArgumentParser())
 
-
 print('Labels: {}'.format(args.num_labels))
 print('Train Known: {}'.format(args.train_known_labels))
 print('Test Known:  {}'.format(args.test_known_labels))
 
-train_loader,valid_loader,test_loader = get_data(args)
+train_loader, valid_loader, test_loader = get_data(args)
 
 if args.dataset == 'cub':
     model = CTranModelCub(args.num_labels,args.use_lmt,args.pos_emb,args.layers,args.heads,args.dropout,args.no_x_features)

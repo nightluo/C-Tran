@@ -19,22 +19,31 @@ def get_data(args):
     dataset = args.dataset
     data_root=args.dataroot
     batch_size=args.batch_size
-
-    rescale=args.scale_size
-    random_crop=args.crop_size
-    attr_group_dict=args.attr_group_dict
     workers=args.workers
+    # 放缩，rescale = args.scale_size = 640
+    rescale=args.scale_size
+    # 随即裁剪，random_crop = args.crop_size = 576
+    random_crop=args.crop_size
+
+    # 聚类处理的 CUB, attr_group_dict
+    attr_group_dict=args.attr_group_dict
+    # 聚类处理的 CUB, groups for CUB test time intervention
     n_groups=args.n_groups
 
     # 基于 ImageNet 数据集的 mean 和 std 参数进行标准化
     normTransform = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+
     scale_size = rescale
     crop_size = random_crop
+
+    # optimization 的 test_batch_size 默认为 -1
     if args.test_batch_size == -1:
         args.test_batch_size = batch_size
     
-    # 随即裁剪再放缩到 crop_size 576
+    # 放缩到统一的尺寸 scale_size 640
+    # 随机裁剪再放缩到统一的裁剪尺寸 crop_size 576
     trainTransform = transforms.Compose([transforms.Resize((scale_size, scale_size)),
+                                        # 随机选择一个裁剪尺寸进行裁剪
                                         transforms.RandomChoice([
                                         transforms.RandomCrop(640),
                                         transforms.RandomCrop(576),
@@ -42,12 +51,16 @@ def get_data(args):
                                         transforms.RandomCrop(384),
                                         transforms.RandomCrop(320)
                                         ]),
+                                        # 将裁剪的小块放缩成统一的 crop_size
                                         transforms.Resize((crop_size, crop_size)),
+                                        # 翻转
                                         transforms.RandomHorizontalFlip(),
                                         transforms.ToTensor(),
+                                        # 正则化
                                         normTransform])
 
     testTransform = transforms.Compose([transforms.Resize((scale_size, scale_size)),
+                                        # 不需要随机裁剪，直接中心裁剪 crop_size 尺寸的小块
                                         transforms.CenterCrop(crop_size),
                                         transforms.ToTensor(),
                                         normTransform])
