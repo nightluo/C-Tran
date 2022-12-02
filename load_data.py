@@ -67,19 +67,25 @@ def get_data(args):
 
     test_dataset = None
     test_loader = None
+    # ？
     drop_last = False
     if dataset == 'coco':
+        # 数据集根目录
         coco_root = os.path.join(data_root,'coco')
+        # 每张图的文本信息目录
         ann_dir = os.path.join(coco_root,'annotations_pytorch')
+        # 训练图像
         train_img_root = os.path.join(coco_root,'train2014')
+        # 测试图像
         test_img_root = os.path.join(coco_root,'val2014')
+
         train_data_name = 'train.data'
         val_data_name = 'val_test.data'
         
         train_dataset = Coco80Dataset(
             split='train',
             num_labels=args.num_labels,
-            data_file=os.path.join(coco_root,train_data_name),
+            data_file=os.path.join(coco_root, train_data_name),
             img_root=train_img_root,
             annotation_dir=ann_dir,
             max_samples=args.max_samples,

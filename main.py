@@ -24,7 +24,9 @@ if args.dataset == 'cub':
     print(model.self_attn_layers)
 else:
     model = CTranModel(args.num_labels,args.use_lmt,args.pos_emb,args.layers,args.heads,args.dropout,args.no_x_features)
-    print(model.self_attn_layers)
+    # txt = open("model.txt", "w")
+    # print(model, file = txt)
+    # print(model.self_attn_layers)
 
 
 def load_saved_model(saved_model_name,model):
