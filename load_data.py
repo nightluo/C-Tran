@@ -83,17 +83,21 @@ def get_data(args):
         val_data_name = 'val_test.data'
         
         train_dataset = Coco80Dataset(
+            # split 看起来并没有用处
             split='train',
             num_labels=args.num_labels,
             data_file=os.path.join(coco_root, train_data_name),
             img_root=train_img_root,
             annotation_dir=ann_dir,
+            # 默认为 -1，设置最大样本数，why？
             max_samples=args.max_samples,
             transform=trainTransform,
+            # 使用 lmt 方法时，args.train_known_labels=100
             known_labels=args.train_known_labels,
             testing=False)
 
-        valid_dataset = Coco80Dataset(split='val',
+        valid_dataset = Coco80Dataset(
+            split='val',
             num_labels=args.num_labels,
             data_file=os.path.join(coco_root,val_data_name),
             img_root=test_img_root,
@@ -202,10 +206,10 @@ def get_data(args):
         exit(0)
 
     if train_dataset is not None:
-        train_loader = DataLoader(train_dataset, batch_size=batch_size,shuffle=True, num_workers=workers,drop_last=drop_last)
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=workers, drop_last=drop_last, pin_memory=True)
     if valid_dataset is not None:
-        valid_loader = DataLoader(valid_dataset, batch_size=args.test_batch_size,shuffle=False, num_workers=workers)
+        valid_loader = DataLoader(valid_dataset, batch_size=args.test_batch_size, shuffle=False, num_workers=workers, pin_memory=True)
     if test_dataset is not None:
-        test_loader = DataLoader(test_dataset, batch_size=args.test_batch_size,shuffle=False, num_workers=workers)
+        test_loader = DataLoader(test_dataset, batch_size=args.test_batch_size, shuffle=False, num_workers=workers, pin_memory=True)
 
     return train_loader,valid_loader,test_loader

@@ -32,22 +32,6 @@ class Coco80Dataset(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        """
-        split_data[32320]:{
-            'image_id': '48772', 
-            'file_name': 'COCO_train2014_000000048772.jpg', 
-            'objects': [
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-            'caption': 'A man and a woman sitting down behind a table with bananas on it.'
-        }
-        """
         # print(f"split_data[{idx}]:{self.split_data[idx]}")
 
         # 获取 batch_size 中索引为 idx 的对象的图像 id
@@ -61,12 +45,20 @@ class Coco80Dataset(Dataset):
         labels = torch.Tensor(labels)
         
         # 标签种类 num_labels = 80
-        # 使用 lmt 时 args.train_known_labels = 100，否则默认为 0 
+        # 使用 lmt 时 args.train_known_labels = 100，否则默认为 0
+        # unk_mask_indices: 未知标签的掩码索引数组
         unk_mask_indices = get_unk_mask_indices(image, self.testing, self.num_labels, self.known_labels)
-        
+        # 克隆标签信息
         mask = labels.clone()
         # 根据索引值，在指定位置生成 mask
-        mask.scatter_(0,torch.Tensor(unk_mask_indices).long() , -1)
+        mask.scatter_(0, torch.Tensor(unk_mask_indices).long() , -1)
+        """
+        掩码的生成
+        1、获取未知标签 unknown_label 的掩码索引数组
+        2、克隆图像的原始标签信息
+        3、对原始标签信息进行掩蔽 mask
+        """
+        # print(f"mask[{idx}]:{mask}")
 
         sample = {}
         sample['image'] = image

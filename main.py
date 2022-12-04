@@ -18,12 +18,16 @@ print('Train Known: {}'.format(args.train_known_labels))
 print('Test Known:  {}'.format(args.test_known_labels))
 
 train_loader, valid_loader, test_loader = get_data(args)
+"""
+COCO80: <DataLoader object>, <DataLoader object>, None
+"""
+# print(train_loader, valid_loader, test_loader)
 
 if args.dataset == 'cub':
-    model = CTranModelCub(args.num_labels,args.use_lmt,args.pos_emb,args.layers,args.heads,args.dropout,args.no_x_features)
+    model = CTranModelCub(args.num_labels, args.use_lmt, args.pos_emb, args.layers, args.heads, args.dropout, args.no_x_features)
     print(model.self_attn_layers)
 else:
-    model = CTranModel(args.num_labels,args.use_lmt,args.pos_emb,args.layers,args.heads,args.dropout,args.no_x_features)
+    model = CTranModel(args.num_labels, args.use_lmt, args.pos_emb, args.layers, args.heads, args.dropout, args.no_x_features)
     # txt = open("model.txt", "w")
     # print(model, file = txt)
     # print(model.self_attn_layers)

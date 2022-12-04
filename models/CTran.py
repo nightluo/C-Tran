@@ -5,32 +5,37 @@ import numpy as np
 from pdb import set_trace as stop
 from .transformer_layers import SelfAttnLayer
 from .backbone import Backbone
-from .utils import custom_replace,weights_init
-from .position_enc import PositionEmbeddingSine,positionalencoding2d
+from .utils import custom_replace, weights_init
+from .position_enc import PositionEmbeddingSine, positionalencoding2d
 
  
 class CTranModel(nn.Module):
     def __init__(self,num_labels,use_lmt,pos_emb=False,layers=3,heads=4,dropout=0.1,int_loss=0,no_x_features=False):
         super(CTranModel, self).__init__()
         self.use_lmt = use_lmt
-        
-        self.no_x_features = no_x_features # (for no image features)
+        # for no image features)
+        self.no_x_features = no_x_features
 
-        # ResNet backbone
+        # ResNet backbone: ResNet 101
         self.backbone = Backbone()
         hidden = 2048 # this should match the backbone output feature size
 
+        # 下采样
         self.downsample = False
         if self.downsample:
             self.conv_downsample = torch.nn.Conv2d(hidden,hidden,(1,1))
         
         # Label Embeddings
+        # 输入的标签
         self.label_input = torch.Tensor(np.arange(num_labels)).view(1,-1).long()
+        # 标签嵌入
         self.label_lt = torch.nn.Embedding(num_labels, hidden, padding_idx=None)
 
         # State Embeddings
+        # padding_idx=0, 长度不一致时补 0 再进 EmbeddingLayer
         self.known_label_lt = torch.nn.Embedding(3, hidden, padding_idx=0)
 
+        # 图像特征的位置编码
         # Position Embeddings (for image features)
         self.use_pos_enc = pos_emb
         if self.use_pos_enc:

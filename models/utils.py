@@ -9,7 +9,7 @@ import math
 from typing import Optional, List
 from torch import nn, Tensor
 
-def custom_replace(tensor,on_neg_1,on_zero,on_one):
+def custom_replace(tensor, on_neg_1, on_zero, on_one):
     res = tensor.clone()
     res[tensor==-1] = on_neg_1
     res[tensor==0] = on_zero

@@ -16,20 +16,24 @@ class Backbone(nn.Module):
         embedding_dim = 2048
         self.freeze_base = False
         self.freeze_base4 = False
-
+        # 基础网络：基于 ImageNet 预训练的ResNet101
         self.base_network = models.resnet101(pretrained=True)
-
-        self.base_network.avgpool = nn.AvgPool2d(kernel_size=7,stride=1,padding=0) # replace avg pool
-        # self.base_network.avgpool = nn.AvgPool2d(2,stride=2) # replace avg pool
+        # replace avg pool
+        # why ? kernel_size = 7
+        # why ? forward 中 no avgpool
+        # input [576, 576, 3], output [18, 18, 2048]
+        self.base_network.avgpool = nn.AvgPool2d(kernel_size=7,stride=1,padding=0) 
+        # self.base_network.avgpool = nn.AvgPool2d(kernel_size=2,stride=2)
 
         # print(self.base_network)
+
+        # 是否冻结网络参数
         if self.freeze_base:
             for param in self.base_network.parameters():
                 param.requires_grad = False
         elif self.freeze_base4:
             for p in self.base_network.layer4.parameters(): 
                 p.requires_grad=True
-
 
     def forward(self,images):
         x = self.base_network.conv1(images)
@@ -40,12 +44,12 @@ class Backbone(nn.Module):
         x = self.base_network.layer2(x)
         x = self.base_network.layer3(x)
         x = self.base_network.layer4(x)
+        # why ? no avgpool ?
         # x = self.base_network.avgpool(x)
     
         return x
 
 
- 
 __all__ = ['MLP', 'Inception3', 'inception_v3', 'End2EndModel']
 
 model_urls = {
