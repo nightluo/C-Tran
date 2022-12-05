@@ -1,4 +1,3 @@
- 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -8,6 +7,7 @@ import copy
 import math
 from typing import Optional, List
 from torch import nn, Tensor
+
 
 def custom_replace(tensor, on_neg_1, on_zero, on_one):
     res = tensor.clone()

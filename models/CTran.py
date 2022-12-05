@@ -10,7 +10,7 @@ from .position_enc import PositionEmbeddingSine, positionalencoding2d
 
  
 class CTranModel(nn.Module):
-    def __init__(self,num_labels,use_lmt,pos_emb=False,layers=3,heads=4,dropout=0.1,int_loss=0,no_x_features=False):
+    def __init__(self, num_labels, use_lmt, pos_emb=False, layers=3, heads=4, dropout=0.1, int_loss=0, no_x_features=False):
         super(CTranModel, self).__init__()
         self.use_lmt = use_lmt
         # for no image features)
@@ -43,11 +43,12 @@ class CTranModel(nn.Module):
             self.position_encoding = positionalencoding2d(hidden, 18, 18).unsqueeze(0)
 
         # Transformer
+        # 本文使用的 3 层、4 头 Transformer
         self.self_attn_layers = nn.ModuleList([SelfAttnLayer(hidden,heads,dropout) for _ in range(layers)])
 
         # Classifier
         # Output is of size num_labels because we want a separate classifier for each label
-        self.output_linear = torch.nn.Linear(hidden,num_labels)
+        self.output_linear = torch.nn.Linear(hidden, num_labels)
 
         # Other
         self.LayerNorm = nn.LayerNorm(hidden)
@@ -61,35 +62,48 @@ class CTranModel(nn.Module):
         self.output_linear.apply(weights_init)
 
 
-    def forward(self,images,mask):
-        const_label_input = self.label_input.repeat(images.size(0),1).cuda()
+    def forward(self, images, mask):
+        const_label_input = self.label_input.repeat(images.size(0), 1).cuda()
         init_label_embeddings = self.label_lt(const_label_input)
+        print(f"label_input:{self.label_input}")
+        print(f"const_label_input:{const_label_input}")
+        print(f"init_label_embeddings:{init_label_embeddings}")
 
+        # 提取图像特征
         features = self.backbone(images)
         
         if self.downsample:
             features = self.conv_downsample(features)
+        
+        # 位置编码
         if self.use_pos_enc:
-            pos_encoding = self.position_encoding(features,torch.zeros(features.size(0),18,18, dtype=torch.bool).cuda())
+            pos_encoding = self.position_encoding(features, torch.zeros(features.size(0), 18, 18, dtype=torch.bool).cuda())
             features = features + pos_encoding
 
-        features = features.view(features.size(0),features.size(1),-1).permute(0,2,1) 
+        # 特征向量处理
+        features = features.view(features.size(0), features.size(1), -1).permute(0, 2, 1) 
 
         if self.use_lmt:
             # Convert mask values to positive integers for nn.Embedding
-            label_feat_vec = custom_replace(mask,0,1,2).long()
+            # unknown -1 to 0, mask 0 to 1, know 1 to 2
+            label_feat_vec = custom_replace(mask, 0, 1, 2).long()
 
             # Get state embeddings
             state_embeddings = self.known_label_lt(label_feat_vec)
 
             # Add state embeddings to label embeddings
             init_label_embeddings += state_embeddings
+
+            print(f"mask:{mask}")
+            print(f"label_feat_vec:{label_feat_vec}")
+            print(f"state_embeddings:{state_embeddings}")
+            print(f"init_label_embeddings:{init_label_embeddings}")
         
         if self.no_x_features:
             embeddings = init_label_embeddings 
         else:
             # Concat image and label embeddings
-            embeddings = torch.cat((features,init_label_embeddings),1)
+            embeddings = torch.cat((features, init_label_embeddings), 1)
 
         # Feed image and label embeddings through Transformer
         embeddings = self.LayerNorm(embeddings)        

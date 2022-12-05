@@ -51,6 +51,7 @@ class Coco80Dataset(Dataset):
         # 克隆标签信息
         mask = labels.clone()
         # 根据索引值，在指定位置生成 mask
+        # mask.scatter_(dim, index, src)
         mask.scatter_(0, torch.Tensor(unk_mask_indices).long() , -1)
         """
         掩码的生成
@@ -65,6 +66,8 @@ class Coco80Dataset(Dataset):
         sample['labels'] = labels
         sample['mask'] = mask
         sample['imageIDs'] = image_ID
+
+        # print(f"sample:{sample}")
         return sample
 
 

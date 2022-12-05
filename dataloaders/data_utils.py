@@ -34,7 +34,7 @@ def get_unk_mask_indices(image, testing, num_labels, known_labels, epoch=1):
             # 如何保证每张图像或者大部分图像均有 known_label ？ 
             # 图像的平均标签数 ？
             num_known = random.randint(0, int(num_labels * 0.75))
-            print(f"num_known = {num_known}")
+            # print(f"num_known = {num_known}")
         
         else:
             # 无监督学习
@@ -45,7 +45,7 @@ def get_unk_mask_indices(image, testing, num_labels, known_labels, epoch=1):
         # 在所有标签内选择 “未知标签个数” 长度的数组，获得要 mask 的 label_idx
         unk_mask_indices = random.sample(range(num_labels), (num_labels - num_known))
     
-    print(f"unk_mask_indices = {unk_mask_indices}")
+    # print(f"unk_mask_indices = {unk_mask_indices}")
         
     return unk_mask_indices
 
