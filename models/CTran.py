@@ -85,7 +85,7 @@ class CTranModel(nn.Module):
 
         if self.use_lmt:
             # Convert mask values to positive integers for nn.Embedding
-            # unknown -1 to 0, mask 0 to 1, know 1 to 2
+            # negative -1 to 0, mask 0 to 1, positive 1 to 2
             label_feat_vec = custom_replace(mask, 0, 1, 2).long()
 
             # Get state embeddings
