@@ -21,9 +21,9 @@ Train New Model
 ```
 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
 
-CUDA_VISIBLE_DEVISES=3,5 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
+CUDA_VISIBLE_DEVICES=3,5 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
 
-python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /home/yuez/night/dataset/coco/
+python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /home/yuez/night/dataset/
 
 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot E:/Datasets/coco/
 ```
@@ -40,6 +40,10 @@ tar -xvf voc.tar.gz -C data/
 Train New Model
 ```
 python main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'voc' --use_lmt --grad_ac_step 2 --dataroot data/
+
+python main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'voc' --use_lmt --grad_ac_step 2 --dataroot /mnt/data/luoyan/
+
+python main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'voc' --use_lmt --grad_ac_step 2 --dataroot /home/yuez/night/dataset
 ```
 
 

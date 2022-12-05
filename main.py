@@ -48,6 +48,7 @@ model = model.cuda()
 if args.inference:
     model = load_saved_model(args.saved_model_name,model)
     if test_loader is not None:
+        
         data_loader =test_loader
     else:
         data_loader =valid_loader

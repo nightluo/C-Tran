@@ -65,9 +65,13 @@ class CTranModel(nn.Module):
     def forward(self, images, mask):
         const_label_input = self.label_input.repeat(images.size(0), 1).cuda()
         init_label_embeddings = self.label_lt(const_label_input)
-        print(f"label_input:{self.label_input}")
-        print(f"const_label_input:{const_label_input}")
-        print(f"init_label_embeddings:{init_label_embeddings}")
+
+        # print(f"label_input:{self.label_input}")
+        # # tensor([[0, 1, ..., 78, 79]])
+        # print(f"const_label_input:{const_label_input}")
+        # # tensor([[0, 1, ..., 78, 79]], device='cuda:0')
+        # print(f"init_label_embeddings:{init_label_embeddings}")
+        # # tensor([[[l1_emb1, l1_emb2, ...], [l2_emb1, ...], ..., [l79_emb1, ...]]])
 
         # 提取图像特征
         features = self.backbone(images)
@@ -89,15 +93,20 @@ class CTranModel(nn.Module):
             label_feat_vec = custom_replace(mask, 0, 1, 2).long()
 
             # Get state embeddings
+            # 三种状态，0、1、2
             state_embeddings = self.known_label_lt(label_feat_vec)
 
             # Add state embeddings to label embeddings
             init_label_embeddings += state_embeddings
 
-            print(f"mask:{mask}")
-            print(f"label_feat_vec:{label_feat_vec}")
-            print(f"state_embeddings:{state_embeddings}")
-            print(f"init_label_embeddings:{init_label_embeddings}")
+            # print(f"mask:{mask}")
+            # # tensor[[0, 0, 1, 0, -1, ...]]
+            # print(f"label_feat_vec:{label_feat_vec}")
+            # # tensor[[1, 1, 2, 1, 0, ...]]
+            # print(f"state_embeddings:{state_embeddings}")
+            # # tensor[[[emb1_1, emb1_2, ...], [emb1_1, emb1_2, ...], [emb2_1, emb2_2, ...], [emb1_1, emb1_2, ...], [emb0_1, emb0_2, ...]]]
+            # print(f"init_label_embeddings:{init_label_embeddings}")
+            # # 相加
         
         if self.no_x_features:
             embeddings = init_label_embeddings 
@@ -107,16 +116,23 @@ class CTranModel(nn.Module):
 
         # Feed image and label embeddings through Transformer
         embeddings = self.LayerNorm(embeddings)        
+        # why? need attns?
         attns = []
         for layer in self.self_attn_layers:
-            embeddings,attn = layer(embeddings,mask=None)
+            embeddings, attn = layer(embeddings,mask=None)
             attns += attn.detach().unsqueeze(0).data
+
+        print(f"init_label_embeddings.size():{init_label_embeddings.size()}")
+        print(f"-init_label_embeddings.size(1):{-init_label_embeddings.size(1)}")
 
         # Readout each label embedding using a linear layer
         label_embeddings = embeddings[:,-init_label_embeddings.size(1):,:]
+        print(f"label_embeddings.size():{label_embeddings.size()}")
         output = self.output_linear(label_embeddings) 
-        diag_mask = torch.eye(output.size(1)).unsqueeze(0).repeat(output.size(0),1,1).cuda()
-        output = (output*diag_mask).sum(-1)
+        print(f"output.size():{output.size()}")
+        diag_mask = torch.eye(output.size(1)).unsqueeze(0).repeat(output.size(0), 1, 1).cuda()
+        output = (output * diag_mask).sum(-1)
+        print(f"output.size():{output.size()}")
 
-        return output,None,attns
+        return output, None, attns
 
