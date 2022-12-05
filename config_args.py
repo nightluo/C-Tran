@@ -21,7 +21,7 @@ def get_args(parser,eval=False):
     parser.add_argument('--grad_ac_steps', type=int, default=1)
     parser.add_argument('--scheduler_step', type=int, default=1000)
     parser.add_argument('--scheduler_gamma', type=float, default=0.1)
-    parser.add_argument('--epochs', type=int, default=100)
+    parser.add_argument('--epochs', type=int, default=1)
     parser.add_argument('--int_loss', type=float, default=0.0)
     parser.add_argument('--aux_loss', type=float, default=0.0)
     parser.add_argument('--loss_type', type=str, choices=['bce', 'mixed','class_ce','soft_margin'], default='bce')
