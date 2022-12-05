@@ -122,17 +122,22 @@ class CTranModel(nn.Module):
             embeddings, attn = layer(embeddings,mask=None)
             attns += attn.detach().unsqueeze(0).data
 
-        print(f"init_label_embeddings.size():{init_label_embeddings.size()}")
-        print(f"-init_label_embeddings.size(1):{-init_label_embeddings.size(1)}")
+        # print(f"init_label_embeddings.size():{init_label_embeddings.size()}")
+        # # [batch_size, num_label, emb_dim]
+        # print(f"-init_label_embeddings.size(1):{-init_label_embeddings.size(1)}")
+        # # - num_label
 
         # Readout each label embedding using a linear layer
         label_embeddings = embeddings[:,-init_label_embeddings.size(1):,:]
-        print(f"label_embeddings.size():{label_embeddings.size()}")
+        # print(f"label_embeddings.size():{label_embeddings.size()}")
+        # [batch_size, num_label, emb_dim]
         output = self.output_linear(label_embeddings) 
-        print(f"output.size():{output.size()}")
+        # print(f"output.size():{output.size()}")
+        # [batch_size, num_label, num_label]
         diag_mask = torch.eye(output.size(1)).unsqueeze(0).repeat(output.size(0), 1, 1).cuda()
         output = (output * diag_mask).sum(-1)
-        print(f"output.size():{output.size()}")
+        # print(f"output.size():{output.size()}")
+        # [batch_size, num_label]
 
         return output, None, attns
 

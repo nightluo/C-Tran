@@ -45,16 +45,17 @@ if torch.cuda.device_count() > 1:
     model = nn.DataParallel(model)
 model = model.cuda()
 
+
+# 测试
 if args.inference:
     model = load_saved_model(args.saved_model_name,model)
     if test_loader is not None:
-        
         data_loader =test_loader
     else:
         data_loader =valid_loader
     
-    all_preds,all_targs,all_masks,all_ids,test_loss,test_loss_unk = run_epoch(args,model,data_loader,None,1,'Testing')
-    test_metrics = evaluate.compute_metrics(args,all_preds,all_targs,all_masks,test_loss,test_loss_unk,0,args.test_known_labels)
+    all_preds, all_targs, all_masks, all_ids, test_loss, test_loss_unk = run_epoch(args, model, data_loader, None, 1, 'Testing')
+    test_metrics = evaluate.compute_metrics(args, all_preds, all_targs, all_masks, test_loss, test_loss_unk, 0, args.test_known_labels)
 
     exit(0)
 

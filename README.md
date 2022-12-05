@@ -1,3 +1,11 @@
+<!--
+ * @Author: 1872194982@qq.com 1872194982@qq.com
+ * @Date: 2022-12-05 15:51:03
+ * @LastEditors: 1872194982@qq.com 1872194982@qq.com
+ * @LastEditTime: 2022-12-05 15:52:10
+ * @FilePath: \C-Tran\project\C-Tran\README.md
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 **General Multi-label Image Classification with Transformers**<br/>
 Jack Lanchantin, Tianlu Wang, Vicente Ordóñez Román, Yanjun Qi<br/>
 Conference on Computer Vision and Pattern Recognition (CVPR) 2021<br/>
@@ -40,6 +48,8 @@ tar -xvf voc.tar.gz -C data/
 Train New Model
 ```
 python main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'voc' --use_lmt --grad_ac_step 2 --dataroot data/
+
+python main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'voc' --use_lmt --grad_ac_step 2 --dataroot E:/Datasets/
 
 python main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'voc' --use_lmt --grad_ac_step 2 --dataroot /mnt/data/luoyan/
 
