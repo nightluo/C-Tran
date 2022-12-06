@@ -10,7 +10,7 @@ def get_args(parser,eval=False):
     parser.add_argument('--workers', type=int, default=0)
     # parser.add_argument('--workers', type=int, default=10)
     parser.add_argument('--results_dir', type=str, default='results/')
-    parser.add_argument('--test_known', type=int, default=0)
+    parser.add_argument('--test_known', type=int, default=10)
 
     # Optimization
     parser.add_argument('--optim', type=str, choices=['adam', 'sgd'], default='adam')
