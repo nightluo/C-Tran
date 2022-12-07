@@ -21,7 +21,7 @@ Train New Model
 ```
 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
 
-CUDA_VISIBLE_DEVICES=3,5 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
+CUDA_VISIBLE_DEVICES=3,4,5 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
 
 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /home/yuez/night/dataset/
 
