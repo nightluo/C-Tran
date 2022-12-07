@@ -99,7 +99,7 @@ def get_data(args):
         valid_dataset = Coco80Dataset(
             split='val',
             num_labels=args.num_labels,
-            data_file=os.path.join(coco_root,val_data_name),
+            data_file=os.path.join(coco_root, val_data_name),
             img_root=test_img_root,
             annotation_dir=ann_dir,
             max_samples=args.max_samples,
