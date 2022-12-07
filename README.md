@@ -2,7 +2,7 @@
  * @Author: 1872194982@qq.com 1872194982@qq.com
  * @Date: 2022-12-05 15:51:03
  * @LastEditors: 1872194982@qq.com 1872194982@qq.com
- * @LastEditTime: 2022-12-05 15:52:10
+ * @LastEditTime: 2022-12-06 13:29:32
  * @FilePath: \C-Tran\project\C-Tran\README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -29,7 +29,7 @@ Train New Model
 ```
 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
 
-CUDA_VISIBLE_DEVICES=3,5 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
+CUDA_VISIBLE_DEVICES=5,6 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /mnt/data/luoyan/coco/
 
 python3 main.py  --batch_size 16  --lr 0.00001 --optim 'adam' --layers 3  --dataset 'coco' --use_lmt --dataroot /home/yuez/night/dataset/
 
