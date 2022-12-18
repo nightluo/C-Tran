@@ -19,23 +19,34 @@ class CTranModel(nn.Module):
         # ResNet backbone: ResNet 101
         self.backbone = Backbone()
         hidden = 300
-        # hidden = 2048 # this should match the backbone output feature size
+        
+        """
+        hidden = 2048 # this should match the backbone output feature size
+        """
 
         # 下采样
-        # self.downsample = False
-        self.downsample = False
+        self.downsample = True
         if self.downsample:
-            self.conv_downsample = torch.nn.Conv2d(hidden,hidden,(1,1))
+            # self.conv_downsample = torch.nn.Conv2d(hidden, hidden, (1,1))
+            self.conv_downsample = torch.nn.Conv2d(2048, hidden, (1,1))
+        
         
         # 输入的标签
         self.label_input = torch.Tensor(np.arange(num_labels)).view(1,-1).long()
-        
+        txt_glove = '/mnt/data/luoyan/coco/GCN-data/data/coco_glove_word2vec.pkl'
+        with open(txt_glove, 'rb') as f:
+            self.label_glove = pickle.load(f)
+        self.label_lt = self.label_glove[0]
+
+        """
         # Label Embedding
         self.label_lt = torch.nn.Embedding(num_labels, hidden, padding_idx=None)
+        """
 
         # State Embeddings
         # padding_idx=0, 长度不一致时补 0 再进 EmbeddingLayer
         self.known_label_lt = torch.nn.Embedding(3, hidden, padding_idx=0)
+        
 
         # 图像特征的位置编码
         # Position Embeddings (for image features)
@@ -114,14 +125,10 @@ class CTranModel(nn.Module):
             embeddings = init_label_embeddings 
         else:
             # Concat image and label embeddings
-            # [4, 324, 2048]
             print(f"features:{features.size()}")
-            # [4, 80, 300]
             print(f"init_label_embeddings:{init_label_embeddings.size()}")
             embeddings = torch.cat((features, init_label_embeddings), 1)
             print(f"embeddings:{embeddings.size()}")
-        
-        # print(f"embeddings:{embeddings.size()}")
 
         # Feed image and label embeddings through Transformer
         embeddings = self.LayerNorm(embeddings)        

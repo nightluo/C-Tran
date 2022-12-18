@@ -7,10 +7,10 @@ from pdb import set_trace as stop
 def get_args(parser,eval=False):
     parser.add_argument('--dataroot', type=str, default='/mnt/data/luoyan/coco/')
     parser.add_argument('--dataset', type=str, choices=['coco', 'voc','coco1000','nus','vg','news','cub'], default='coco')
-    parser.add_argument('--workers', type=int, default=0)
+    parser.add_argument('--workers', type=int, default=8)
     # parser.add_argument('--workers', type=int, default=10)
     parser.add_argument('--results_dir', type=str, default='results/')
-    parser.add_argument('--test_known', type=int, default=10)
+    parser.add_argument('--test_known', type=int, default=0)
 
     # Optimization
     parser.add_argument('--optim', type=str, choices=['adam', 'sgd'], default='adam')
@@ -21,7 +21,7 @@ def get_args(parser,eval=False):
     parser.add_argument('--grad_ac_steps', type=int, default=1)
     parser.add_argument('--scheduler_step', type=int, default=1000)
     parser.add_argument('--scheduler_gamma', type=float, default=0.1)
-    parser.add_argument('--epochs', type=int, default=1)
+    parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--int_loss', type=float, default=0.0)
     parser.add_argument('--aux_loss', type=float, default=0.0)
     parser.add_argument('--loss_type', type=str, choices=['bce', 'mixed','class_ce','soft_margin'], default='bce')
@@ -126,7 +126,7 @@ def get_args(parser,eval=False):
         
     model_name = os.path.join(args.results_dir,model_name)
     
-    args.model_name = model_name
+    args.model_name = model_name + "300hidden"
 
 
     if args.inference:
