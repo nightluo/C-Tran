@@ -7,6 +7,7 @@ from .transformer_layers import SelfAttnLayer
 from .backbone import Backbone
 from .utils import custom_replace, weights_init
 from .position_enc import PositionEmbeddingSine, positionalencoding2d
+import pickle
 
  
 class CTranModel(nn.Module):
@@ -36,7 +37,7 @@ class CTranModel(nn.Module):
         txt_glove = '/mnt/data/luoyan/coco/GCN-data/data/coco_glove_word2vec.pkl'
         with open(txt_glove, 'rb') as f:
             self.label_glove = pickle.load(f)
-        self.label_lt = self.label_glove[0]
+        # self.label_lt = torch.tensor(self.label_glove).unsqueeze(0)
 
         """
         # Label Embedding
@@ -68,7 +69,7 @@ class CTranModel(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
         # Init all except pretrained backbone
-        self.label_lt.apply(weights_init)
+        # self.label_lt.apply(weights_init)
         self.known_label_lt.apply(weights_init)
         self.LayerNorm.apply(weights_init)
         self.self_attn_layers.apply(weights_init)
@@ -76,8 +77,13 @@ class CTranModel(nn.Module):
 
 
     def forward(self, images, mask):
-        const_label_input = self.label_input.repeat(images.size(0), 1).cuda()
-        init_label_embeddings = self.label_lt(const_label_input)
+        # const_label_input = self.label_input.repeat(images.size(0), 1).cuda()
+        # init_label_embeddings = self.label_lt(const_label_input)
+        # print(f"torch.tensor(self.label_glove)",{torch.tensor(self.label_glove).size()})
+        # print(f"torch.tensor(self.label_glove).unsqueeze(0)",{torch.tensor(self.label_glove).unsqueeze(0).size()})
+        init_label_embeddings = torch.tensor(self.label_glove).unsqueeze(0).repeat(images.size(0), 1, 1).cuda()
+        # [80, 300] --> [images.size(0), 80, 300]
+        # print(f"init_label_embeddings:{init_label_embeddings.size()}")
 
         # print(f"label_input:{self.label_input}")
         # # tensor([[0, 1, ..., 78, 79]])
@@ -88,9 +94,13 @@ class CTranModel(nn.Module):
 
         # 提取图像特征
         features = self.backbone(images)
+        # [6, 2048, 18, 18]
+        # print(f"features:{features.size()}")
         
         if self.downsample:
             features = self.conv_downsample(features)
+            # [6, 300, 18, 18]
+            # print(f"features:{features.size()}")
         
         # 位置编码
         if self.use_pos_enc:
@@ -98,7 +108,9 @@ class CTranModel(nn.Module):
             features = features + pos_encoding
 
         # 特征向量处理
-        features = features.view(features.size(0), features.size(1), -1).permute(0, 2, 1) 
+        features = features.view(features.size(0), features.size(1), -1).permute(0, 2, 1)
+        # [6, 324, 300]
+        # print(f"features:{features.size()}")
 
         if self.use_lmt:
             # Convert mask values to positive integers for nn.Embedding
@@ -108,6 +120,8 @@ class CTranModel(nn.Module):
             # Get state embeddings
             # 三种状态，0、1、2
             state_embeddings = self.known_label_lt(label_feat_vec)
+            # [6, 80, 300]
+            # print(state_embeddings)
 
             # Add state embeddings to label embeddings
             init_label_embeddings += state_embeddings
@@ -125,10 +139,10 @@ class CTranModel(nn.Module):
             embeddings = init_label_embeddings 
         else:
             # Concat image and label embeddings
-            print(f"features:{features.size()}")
-            print(f"init_label_embeddings:{init_label_embeddings.size()}")
+            # print(f"features:{features.size()}")
+            # print(f"init_label_embeddings:{init_label_embeddings.size()}")
             embeddings = torch.cat((features, init_label_embeddings), 1)
-            print(f"embeddings:{embeddings.size()}")
+            # print(f"embeddings:{embeddings.size()}")
 
         # Feed image and label embeddings through Transformer
         embeddings = self.LayerNorm(embeddings)        

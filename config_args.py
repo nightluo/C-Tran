@@ -126,7 +126,7 @@ def get_args(parser,eval=False):
         
     model_name = os.path.join(args.results_dir,model_name)
     
-    args.model_name = model_name + "300hidden"
+    args.model_name = model_name + ".Emd2048"
 
 
     if args.inference:

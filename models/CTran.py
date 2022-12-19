@@ -18,14 +18,14 @@ class CTranModel(nn.Module):
 
         # ResNet backbone: ResNet 101
         self.backbone = Backbone()
-        hidden = 300
-        # hidden = 2048 # this should match the backbone output feature size
+        # hidden = 300
+        hidden = 2048 # this should match the backbone output feature size
 
         # 下采样
-        # self.downsample = False
         self.downsample = False
+        # self.downsample = True
         if self.downsample:
-            self.conv_downsample = torch.nn.Conv2d(hidden,hidden,(1,1))
+            self.conv_downsample = torch.nn.Conv2d(2048,hidden,(1,1))
         
         # 输入的标签
         self.label_input = torch.Tensor(np.arange(num_labels)).view(1,-1).long()
@@ -115,11 +115,11 @@ class CTranModel(nn.Module):
         else:
             # Concat image and label embeddings
             # [4, 324, 2048]
-            print(f"features:{features.size()}")
+            # print(f"features:{features.size()}")
             # [4, 80, 300]
-            print(f"init_label_embeddings:{init_label_embeddings.size()}")
+            # print(f"init_label_embeddings:{init_label_embeddings.size()}")
             embeddings = torch.cat((features, init_label_embeddings), 1)
-            print(f"embeddings:{embeddings.size()}")
+            # print(f"embeddings:{embeddings.size()}")
         
         # print(f"embeddings:{embeddings.size()}")
 
